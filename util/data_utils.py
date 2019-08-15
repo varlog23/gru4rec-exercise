@@ -16,8 +16,8 @@ def create_sequence_for_sessions(df):
     return result
 
 
-def get_dataset_info(df):
-    seq_df = create_seq_db_filter_top_k(df)
+def print_dataset_info(df):
+    seq_df = create_sequence_for_sessions(df)
     cnt = Counter()
     seq_df.sequence.map(cnt.update)
     sequence_length = seq_df.sequence.map(len).values
