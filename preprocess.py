@@ -55,6 +55,6 @@ def get_data():
     # Drop rows without reference
     concatenated_df = concatenated_df.dropna(subset=['reference'])
     # Select necessary columns required by the model
-    data = concatenated_df[['SessionId','ItemId', 'Time']]
+    data = concatenated_df[['SessionId','ItemId', 'Time']].reset_index(drop=True)
     return data
 
