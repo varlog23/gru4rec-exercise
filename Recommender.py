@@ -1,6 +1,5 @@
 import numpy as np
 import logging
-from util.data_utils import dataset_to_gru4rec_format
 from gru4rec.gru4rec import GRU4Rec
 
 
@@ -73,10 +72,6 @@ class Recommender():
                ')'.format(**self.__dict__)
 
     def fit(self, train_data):
-        self.logger.info('Converting training data to gru4rec format')
-        # parse training data to gru4rec format
-        train_data = dataset_to_gru4rec_format(dataset=train_data)
-
         if not self.personalized:
             # fit gru4rec
             self.model = GRU4Rec(layers=self.session_layers,
@@ -85,9 +80,9 @@ class Recommender():
                                  learning_rate=self.learning_rate,
                                  momentum=self.momentum,
                                  dropout_p_hidden=self.dropout,
-                                 session_key='session_id',
-                                 item_key='item_id',
-                                 time_key='ts')
+                                 session_key='SessionId',
+                                 item_key='ItemId',
+                                 time_key='Time')
 
         self.logger.info('Training started')
         self.model.fit(train_data)
