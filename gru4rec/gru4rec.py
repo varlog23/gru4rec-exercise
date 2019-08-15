@@ -11,8 +11,9 @@ from theano.sandbox.rng_mrg import MRG_RandomStreams
 import numpy as np
 import pandas as pd
 from collections import OrderedDict
+from gru4rec.gpu_ops import gpu_diag_wide
 mrng = MRG_RandomStreams()
-from gpu_ops import gpu_diag_wide
+
 
 class GRU4Rec:
     '''
