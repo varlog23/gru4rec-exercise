@@ -35,3 +35,22 @@ for index, f in enumerate(csv_files):
 concatenated_df = pd.concat(df_from_each_file, ignore_index=True)
 # Generate fictitious timestamp in the order
 concatenated_df['ts'] = concatenated_df.apply(generate_timestamp, axis=1)
+# Create a column that will hold a unique identity for the component
+concatenated_df["reference"] = np.nan
+
+concatenated_df.loc[concatenated_df['reference'].isnull() & concatenated_df['name'].isnull() & (
+        concatenated_df['type'] == 'submit'), 'reference'] = \
+    concatenated_df['type']
+
+concatenated_df.loc[concatenated_df['reference'].isnull() & concatenated_df['name'].notnull(), 'reference'] = \
+    concatenated_df['name']
+
+concatenated_df.loc[concatenated_df['reference'].isnull() & concatenated_df['name'].isnull() & concatenated_df[
+    'href'].notnull(), 'reference'] = \
+    concatenated_df['href']
+
+# Assign unique ID to every "reference"
+concatenated_df['id'] = concatenated_df.groupby(['reference'], sort=False).ngroup()
+# Drop rows without reference
+concatenated_df = concatenated_df.dropna(subset=['reference'])
+
