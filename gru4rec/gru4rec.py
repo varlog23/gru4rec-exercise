@@ -607,7 +607,7 @@ class GRU4Rec:
                 self.error_during_train = True
                 return
             print('Epoch{}\tloss: {:.6f}'.format(epoch, avgc))
-    def predict_next_batch(self, session_ids, input_item_ids, predict_for_item_ids=None, batch=100):
+    def predict_next_batch(self, session_ids, input_item_ids, predict_for_item_ids=None, batch=1):
         '''
         Gives predicton scores for a selected set of items. Can be used in batch mode to predict for multiple independent events (i.e. events of different sessions) at once and thus speed up evaluation.
 
