@@ -6,7 +6,6 @@ number_of_sequences = 100
 
 
 def generate_sequences(sequence_gap, session_id, begin, end):
-    # session_id = 40
     sess = session_id
     all_res = []
     for i in range(number_of_sequences):
