@@ -3,9 +3,6 @@ import glob
 import os
 import time
 import numpy as np
-import random
-
-file_path = r'/home/varun/Downloads/Dataset/'
 
 
 def generate_timestamp(row):
@@ -22,7 +19,7 @@ def print_all_columns(df):
         print(col)
 
 
-def get_data():
+def get_data(file_path):
     csv_files = get_all_files(file_path)
     df_from_each_file = []
     for index, f in enumerate(csv_files):
@@ -52,9 +49,12 @@ def get_data():
 
     # Assign unique ID to every "reference"
     concatenated_df['ItemId'] = concatenated_df.groupby(['reference'], sort=False).ngroup()
+
     # Drop rows without reference
     concatenated_df = concatenated_df.dropna(subset=['reference'])
+
     # Select necessary columns required by the model
-    data = concatenated_df[['SessionId','ItemId', 'Time']].reset_index(drop=True)
+    data = concatenated_df[['SessionId', 'ItemId', 'Time']].reset_index(drop=True)
+    data['ItemId'] = data['ItemId'].apply(str)
     return data
 
