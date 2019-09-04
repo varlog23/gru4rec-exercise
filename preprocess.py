@@ -24,34 +24,43 @@ def get_data(file_path):
     df_from_each_file = []
     for index, f in enumerate(csv_files):
         # Select required columns from the CSV files
-        df_temp = pd.read_csv(f, usecols=["href", "name", "identifiyng type", "type", "required"])
+        df_temp = pd.read_csv(f, usecols=["href", "name", "identifiyng type", "type", "required", "action"])
         # Assign a session ID for every csv file
         df_temp['SessionId'] = index
         df_from_each_file.append(df_temp)
 
-    # Concatenate DataFrame's
+    # Concatenate DataFrame's from every test case
     concatenated_df = pd.concat(df_from_each_file, ignore_index=True)
-    # Generate fictitious timestamp in the order
+    # Generate fictitious timestamp because the selenium IDE does not record this and the model needs this feature
     concatenated_df['Time'] = concatenated_df.apply(generate_timestamp, axis=1)
-    # Create a column that will hold a unique identity for the component
-    concatenated_df["reference"] = np.nan
+    # Create a column that will hold a unique identity for the "item" (GUI component)
+    concatenated_df["component"] = np.nan
 
-    concatenated_df.loc[concatenated_df['reference'].isnull() & concatenated_df['name'].isnull() & (
-            concatenated_df['type'] == 'submit'), 'reference'] = \
+    # Handle submit type when name column is empty
+    concatenated_df.loc[concatenated_df['component'].isnull() & concatenated_df['name'].isnull() & (
+            concatenated_df['type'] == 'submit'), 'component'] = \
         concatenated_df['type']
 
-    concatenated_df.loc[concatenated_df['reference'].isnull() & concatenated_df['name'].notnull(), 'reference'] = \
+    # Otherwise name (not null) becomes the component
+    concatenated_df.loc[concatenated_df['component'].isnull() & concatenated_df['name'].notnull(), 'component'] = \
         concatenated_df['name']
 
-    concatenated_df.loc[concatenated_df['reference'].isnull() & concatenated_df['name'].isnull() & concatenated_df[
-        'href'].notnull(), 'reference'] = \
+    # When name is null and href isn't null, href is the component
+    concatenated_df.loc[concatenated_df['component'].isnull() & concatenated_df['name'].isnull() & concatenated_df[
+        'href'].notnull(), 'component'] = \
         concatenated_df['href']
 
-    # Assign unique ID to every "reference"
-    concatenated_df['ItemId'] = concatenated_df.groupby(['reference'], sort=False).ngroup()
+    # Drop rows without component
+    concatenated_df = concatenated_df.dropna(subset=['component'])
 
-    # Drop rows without reference
-    concatenated_df = concatenated_df.dropna(subset=['reference'])
+    # Assign unique ID to every "action + component"
+    concatenated_df['ItemId'] = concatenated_df.groupby(['action', 'component'], sort=False).ngroup()
+
+    # concatenated_df = concatenated_df.assign(
+    #     ItemId=concatenated_df.index.to_series().groupby(
+    #         [concatenated_df.action,concatenated_df.component], sort=False
+    #     ).ngroup().map('{}'.format)
+    # )[['ItemId'] + concatenated_df.columns.tolist()]
 
     # Select necessary columns required by the model
     data = concatenated_df[['SessionId', 'ItemId', 'Time']].reset_index(drop=True)
