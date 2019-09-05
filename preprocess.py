@@ -64,6 +64,7 @@ def get_data(file_path):
 
     # Select necessary columns required by the model
     data = concatenated_df[['SessionId', 'ItemId', 'Time']].reset_index(drop=True)
+    dict_of_itemid = concatenated_df.drop_duplicates(subset='ItemId', keep="first")[['ItemId', 'component', 'action']]
     data['ItemId'] = data['ItemId'].apply(str)
-    return data
+    return data, dict_of_itemid
 
