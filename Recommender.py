@@ -23,6 +23,7 @@ class Recommender():
                  momentum=0.0,
                  dropout=None,
                  epochs=10,
+                 final_act='linear',
                  personalized=False):
         """
         :param session_layers: number of units per layer used at session level.
@@ -56,6 +57,7 @@ class Recommender():
                 dropout = (0.0, 0.0, 0.0)
         self.dropout = dropout
         self.epochs = epochs
+        self.final_act = final_act
         self.personalized = personalized
         self.pseudo_session_id = 0
 
@@ -68,6 +70,7 @@ class Recommender():
                'momentum={momentum}, ' \
                'dropout={dropout}, ' \
                'epochs={epochs}, ' \
+               'final_act={final_act}, ' \
                'personalized={personalized}, ' \
                ')'.format(**self.__dict__)
 
@@ -80,6 +83,7 @@ class Recommender():
                                  learning_rate=self.learning_rate,
                                  momentum=self.momentum,
                                  dropout_p_hidden=self.dropout,
+                                 final_act = self.final_act,
                                  session_key='SessionId',
                                  item_key='ItemId',
                                  time_key='Time')
