@@ -25,7 +25,7 @@ def test_train_split(dataset, train_size=1.0, seed=1234, shuffle=True):
 
         # split data according to the shuffled index and the holdout size
         train_split = dataset[:split_index]
-        test_split = dataset[split_index:]
+        test_split = dataset[split_index:].reset_index(drop=True)
     else:
         train_split = dataset[:]
         test_split = dataset[:0]
