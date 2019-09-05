@@ -4,7 +4,7 @@ from collections import Counter
 
 def create_sequence_for_sessions(df):
     # group by session id and concat item_id
-    groups = df.groupby('SessionId')
+    groups = df.groupby('SessionId', sort=False)
     # convert item ids to string, then aggregate them to lists
     aggregated = groups['ItemId'].apply(lambda x: list(map(str, x)))
     aggregated = aggregated.to_frame(name='sequence')
